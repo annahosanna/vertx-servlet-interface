@@ -6,3 +6,9 @@
 * [From vertx-httpservlet](https://github.com/annahosanna/vertx-httpservlet)
 * [From dynatrace-vertx-aspect](https://github.com/annahosanna/dynatrace-vertx-aspect/tree/master/src/main/java/com/dynatrace/vertx/aspects)
 * [From firefly](https://github.com/annahosanna/firefly/blob/master/firefly/src/main/java/com/firefly/codec/http2/model/servlet/)
+
+```
+Quick notes
+https://github.com/openzipkin/brave/blob/master/instrumentation/http/src/main/java/brave/http/HttpServerAdapter.java
+https://github.com/quarkusio/quarkus/blob/master/extensions/azure-functions-http/maven-archetype/src/main/resources/archetype-resources/src/main/java/GreetingServlet.java
+```
