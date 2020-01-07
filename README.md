@@ -5,3 +5,4 @@
 * [From ninja-vertx-standalone](https://github.com/annahosanna/ninja-vertx-standalone/tree/master/ninja-vertx-standalone/src/main/java/com/jiabangou/ninja/vertx/standalone)
 * [From vertx-httpservlet](https://github.com/annahosanna/vertx-httpservlet)
 * [From dynatrace-vertx-aspect](https://github.com/annahosanna/dynatrace-vertx-aspect/tree/master/src/main/java/com/dynatrace/vertx/aspects)
+* [From firefly](https://github.com/annahosanna/firefly/blob/master/firefly/src/main/java/com/firefly/codec/http2/model/servlet/)
