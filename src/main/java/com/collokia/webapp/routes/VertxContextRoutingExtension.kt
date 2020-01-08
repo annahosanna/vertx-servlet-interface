@@ -68,3 +68,7 @@ public fun RoutingContext.fullyQualifiedUrl(fromUrlOnThisServer: String): String
     }
     return "$requestScheme://$requestHost$requestPort${fromUrlOnThisServer.mustStartWith('/')}"
 }
+// String forwardedFor = requestHeader(req, "X-Forwarded-For");
+//    if (forwardedFor == null) return false;
+//    int indexOfComma = forwardedFor.indexOf(',');
+//    if (indexOfComma != -1) forwardedFor = forwardedFor.substring(0, indexOfComma);
