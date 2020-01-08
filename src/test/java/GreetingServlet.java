@@ -1,5 +1,7 @@
 package ${package};
 
+// This is from Quarkus
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
