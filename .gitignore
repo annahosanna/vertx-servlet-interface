@@ -1,0 +1,174 @@
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+### Eclipse ###
+*.pydevproject
+.metadata
+.gradle
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+**/.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# Dependency directory
+# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
+node_modules
+
+### Maven ###
+**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+**/.vertx/
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+# ==============
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+
+# Output Directory
+target/
+
+# C pre-compile
+*.gch
+*.pch
+
+# C compile
+*.a
+*.o
+*.ko
+*.la
+*.lo
+*.obj
+*.elf
+*.so
+*.so.*
+*.dylib
+*.exe
+*.lib
+*.dll
+*.out
+*.app
+*.hex
+
+# Debug files
+*.dSYM/
+
+# Java
+*.class
+
+# Java Package Files
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Zip Files
+*.rar
+*.zip
+*.7z
+*.tar
+*.gz
+
+# Ant
+build/
+
+# Compiled Python
+__pycache__/
+*.py[cod]
+*py.class
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ, based on http://devnet.jetbrains.net/docs/DOC-1186
+.idea/
+*.iml
+*.ipr
+*.iws
+/out/
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# logs and trace
+*.log
+*.trace
+*.dat
+
+# vi swap
+*.swp
+
+# Backup Files
+*.bak
+*.old
+
+# SVN metadata
+.svn/
+
+# gradle
+.gradle/
