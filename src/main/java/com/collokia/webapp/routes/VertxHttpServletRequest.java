@@ -1,13 +1,15 @@
 package com.collokia.webapp.routes;
 
 
-import io.netty.handler.codec.http.HttpHeaders;
+// import io.netty.handler.codec.http.HttpHeaders;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.Session;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.*;
+
+// This includes a cookie type
 import javax.servlet.http.*;
 import java.io.*;
 import java.net.URI;
@@ -39,14 +41,18 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         // TODO: AUTH -- if supporting vertx-auth we would need to do something here, and other methods below (marked with TODO: AUTH)
         return null;
     }
-
+    
     @Override
-    public Cookie[] getCookies() {
-        Set<io.vertx.ext.web.Cookie> cookies = context.cookies();
-        Cookie[] results = new Cookie[cookies.size()];
+    public javax.servlet.http.Cookie[] getCookies() {
+
+    	// Was a Set of cookies - now a sting,cookie map
+    	Map<String, io.vertx.core.http.Cookie> cookiesMapped = context.cookieMap();
+    	// Would need a helper function to convert this to a Set
+    	Set<io.vertx.core.http.Cookie> cookies = new HashSet<>(cookiesMapped.values());
+    	javax.servlet.http.Cookie[] results = new javax.servlet.http.Cookie[cookies.size()];
         int i = 0;
-        for (io.vertx.ext.web.Cookie oneCookie : cookies) {
-            results[i] = new Cookie(oneCookie.getName(), oneCookie.getValue());
+        for (io.vertx.core.http.Cookie oneCookie : cookies) {
+            results[i] = new javax.servlet.http.Cookie(oneCookie.getName(), oneCookie.getValue());
             results[i].setDomain(oneCookie.getDomain());
             results[i].setPath(oneCookie.getPath());
         }
@@ -215,7 +221,9 @@ public class VertxHttpServletRequest implements HttpServletRequest {
             throw new NotImplementedException();
         }
 
-        @Override
+        // Deprecated with no replacement per spec
+        @SuppressWarnings("deprecation")
+		@Override
         public HttpSessionContext getSessionContext() {
             throw new NotImplementedException();
         }
@@ -369,12 +377,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public int getContentLength() {
-        return getIntHeader(HttpHeaders.Names.CONTENT_LENGTH);
+        return getIntHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
     }
 
     @Override
     public long getContentLengthLong() {
-        String header = context.request().headers().get(HttpHeaders.Names.CONTENT_LENGTH);
+        String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
         if (header == null) {
             return -1;
         }
@@ -384,7 +392,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getContentType() {
-        return context.request().headers().get(HttpHeaders.Names.CONTENT_TYPE);
+        return context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE.toString());
     }
 
 
@@ -553,7 +561,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Locale getLocale() {
-        String header = context.request().headers().get(HttpHeaders.Names.ACCEPT_LANGUAGE);
+        String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.ACCEPT_LANGUAGE.toString());
         if (header == null) {
             return Locale.US;
         }

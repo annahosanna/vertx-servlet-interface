@@ -4,8 +4,9 @@ import com.jiabangou.ninja.vertx.standalone.utils.DateGenerator;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.impl.LocaleImpl;
-
+// import io.vertx.ext.web.impl.LocaleImpl;
+import io.vertx.ext.web.LanguageHeader;
+// import io.vertx.ext.web.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         printWriter = new VertxPrintWriter(servletOutputStream);
     }
 
-    private static io.vertx.ext.web.Cookie cookieConverter(Cookie cookie) {
+    private static io.vertx.ext.web.Cookie cookieConverter(javax.servlet.http.Cookie cookie) {
         io.vertx.ext.web.Cookie vertxCookie = io.vertx.ext.web.Cookie.cookie(cookie.getName(), cookie.getValue());
         vertxCookie.setDomain(cookie.getDomain());
         vertxCookie.setHttpOnly(cookie.isHttpOnly());
@@ -250,8 +251,10 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     }
 
     @Override
-    public void setLocale(Locale locale) {
-        event.acceptableLocales().add(0, new LocaleImpl(locale.getLanguage(), locale.getCountry(), locale.getVariant()));
+    public void setLocale(java.util.Locale locale) {
+    	LanguageHeader lh = null;
+    	event.acceptableLanguages().add(0, lh );
+        event.acceptableLocales().add(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
     }
 
     @Override

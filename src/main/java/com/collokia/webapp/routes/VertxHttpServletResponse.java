@@ -1,10 +1,10 @@
 package com.collokia.webapp.routes;
 
-import io.netty.handler.codec.http.HttpHeaders;
+// import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.RoutingContext;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -185,7 +185,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
     @Override
     public String getContentType() {
-        return getHeader(HttpHeaders.Names.CONTENT_TYPE);
+        return getHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE.toString());
     }
 
     @Override
@@ -215,7 +215,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
     @Override
     public void setContentType(String type) {
-        setHeader(HttpHeaders.Names.CONTENT_TYPE, type);
+        setHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE.toString(), type);
     }
 
     @Override

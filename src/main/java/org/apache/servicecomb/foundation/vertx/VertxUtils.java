@@ -34,8 +34,8 @@ import org.apache.servicecomb.foundation.vertx.client.ClientVerticle;
 import org.apache.servicecomb.foundation.vertx.stream.BufferInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
+// import org.springframework.util.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.netflix.config.DynamicPropertyFactory;
 
@@ -141,7 +141,10 @@ public final class VertxUtils {
   }
 
   private static void enhanceVertx(String name, Vertx vertx) {
-    if (StringUtils.isEmpty(name)) {
+	  return;
+/*
+      if (StringUtils.isEmpty(name)) {
+ 
       return;
     }
     Field field = ReflectionUtils.findField(VertxImpl.class, "eventLoopThreadFactory");
@@ -153,6 +156,7 @@ public final class VertxUtils {
 
     String prefix = (String) ReflectionUtils.getField(field, eventLoopThreadFactory);
     ReflectionUtils.setField(field, eventLoopThreadFactory, name + "-" + prefix);
+ */
   }
 
   /**
