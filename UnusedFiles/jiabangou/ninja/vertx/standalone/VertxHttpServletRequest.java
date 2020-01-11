@@ -339,7 +339,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         }
         return parameterMap;
     }
-    
+
     @Override
     public String getProtocol() {
         return httpServerRequest.version().name().replaceFirst("_", "/").replaceAll("_", ".");

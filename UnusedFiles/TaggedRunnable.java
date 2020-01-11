@@ -3,7 +3,7 @@ package com.dynatrace.vertx.aspects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.vertx.java.core.impl.DefaultContext;
+// import io.vertx.core.impl.DefaultContext;
 
 import com.dynatrace.adk.Tagging;
 

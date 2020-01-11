@@ -28,9 +28,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
-import org.vertx.java.core.MultiMap;
-import org.vertx.java.core.http.HttpVersion;
-import org.vertx.java.core.http.impl.DefaultHttpServerRequest;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.HttpVersion;
+import io.vertx.core.http.HttpServerRequest;
 
 /**
  * <p>
@@ -57,14 +57,14 @@ public final class VertxServletRequest implements HttpServletRequest {
 	/**
 	 * The internal request object of vertx
 	 */
-	private final DefaultHttpServerRequest request;
+	private final HttpServerRequest request;
 	
 	/**
 	 * c'tor
 	 * 
 	 * @param request the internal request object of vertx
 	 */
-	public VertxServletRequest(DefaultHttpServerRequest request) {
+	public VertxServletRequest(HttpServerRequest request) {
 		this.request = request;
 	}
 
@@ -73,7 +73,7 @@ public final class VertxServletRequest implements HttpServletRequest {
 	 */
 	@Override
 	public String getMethod() {
-		return request.method();
+		return request.method().toString();
 	}
 	
 	/**
@@ -90,7 +90,8 @@ public final class VertxServletRequest implements HttpServletRequest {
 	 */
 	@Override
 	public String getRemoteAddr() {
-		return request.remoteAddress().getAddress().getHostAddress();
+		// TODO: Is this the hostname or address?
+		return request.remoteAddress().host();
 	}
 
 	/**
@@ -98,7 +99,8 @@ public final class VertxServletRequest implements HttpServletRequest {
 	 */
 	@Override
 	public String getRemoteHost() {
-		return request.remoteAddress().getHostName();
+		// TODO: Is this the hostname or address?
+		return request.remoteAddress().host();
 	}
 	
 	/**

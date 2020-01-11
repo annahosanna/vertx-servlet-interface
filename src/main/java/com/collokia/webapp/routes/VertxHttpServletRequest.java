@@ -1,6 +1,7 @@
 package com.collokia.webapp.routes;
 
 
+import io.vertx.core.MultiMap;
 // import io.netty.handler.codec.http.HttpHeaders;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
@@ -18,6 +19,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import io.vertx.core.http.HttpServerRequest;
 
 /**
  * HttpServletRequest wrapper over a vert.x {@link io.vertx.core.http.HttpServerRequest}
@@ -82,9 +84,38 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Enumeration<String> getHeaders(String name) {
-        return Collections.enumeration(context.request().headers().getAll(name));
+        // return Collections.enumeration(context.request().headers().getAll(name));
+    	return getHeaders(name, context.request());
     }
 
+	public Enumeration<String> getHeaders(String name, HttpServerRequest request) {
+		final MultiMap headers = request.headers();
+		if (headers == null) {
+			return Collections.emptyEnumeration();
+		}
+		final List<String> allValues = headers.getAll(name);
+		if (allValues == null) {
+			return Collections.emptyEnumeration();
+		}
+		final Iterator<String> it = allValues.iterator();
+		if (it == null) {
+			return null;
+		}
+		return new Enumeration<String>() {
+
+			@Override
+			public final boolean hasMoreElements() {
+				return it.hasNext();
+			}
+
+			@Override
+			public final String nextElement() {
+				return it.next();
+			}
+		};	
+	}
+    
+    
     @Override
     public Enumeration<String> getHeaderNames() {
         return Collections.enumeration(context.request().headers().names());
@@ -145,6 +176,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public Principal getUserPrincipal() {
         // TODO: AUTH -- would require conversion from context.user().principle() and convert it
+    	// but that type is a json value whose data is auth provider dependant
         return null;
     }
 
@@ -470,7 +502,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         return EMPTY_STRING_ARRAY;
     }
 
-
+    // TODO: This looks like it does nothing with the values  variable
     @Override
     public Map<String, String[]> getParameterMap() {
         Map<String, List<String>> map = new HashMap<>();
@@ -597,7 +629,8 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public int getRemotePort() {
         // TODO: not important
-        throw new NotImplementedException();
+    	return context.request().remoteAddress() == null ? 0 : context.request().remoteAddress().port();
+        // throw new NotImplementedException();
     }
 
 
@@ -610,7 +643,8 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getLocalAddr() {
-        return context.request().localAddress().host();
+    	// TODO: Double check what toString does
+        return context.request().localAddress().toString();
     }
 
     @Override
@@ -655,6 +689,6 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public DispatcherType getDispatcherType() {
-        throw new NotImplementedException();
+        return DispatcherType.REQUEST;
     }
 }

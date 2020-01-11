@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.vertx.java.core.http.impl.DefaultHttpServerRequest;
-import org.vertx.java.core.http.impl.DefaultHttpServerResponse;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 
 /**
  * An artificial Servlet which ensures that an incoming request is being
@@ -30,13 +30,13 @@ public class VertxServlet extends HttpServlet {
 	private static final Logger LOGGER =
 			Logger.getLogger(VertxServlet.class.getName());
 	
-	protected final DefaultHttpServerRequest request;
-	protected final DefaultHttpServerResponse response;
+	protected final HttpServerRequest request;
+	protected final HttpServerResponse response;
 	protected final Runnable proceedRunnable;
 	
 	public VertxServlet(
-			DefaultHttpServerRequest request,
-			DefaultHttpServerResponse response,
+			HttpServerRequest request,
+			HttpServerResponse response,
 			Runnable proceedRunnable
 	) {
 		this.request = request;
