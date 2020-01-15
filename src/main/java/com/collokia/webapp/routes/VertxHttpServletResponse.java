@@ -7,10 +7,8 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -20,59 +18,34 @@ import java.util.*;
 public class VertxHttpServletResponse implements HttpServletResponse {
     final RoutingContext context;
     private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private final VertxServletOutputStream outBuffer = new VertxServletOutputStream();
+    private final PrintWriter outWriter = new PrintWriter(outBuffer);
 
     public void writeToVertx() {
         // The wrapper should call this when it is ready to send the response buffered here.  This could be changed to have it called directly,
         // but not all frameworks use the output stream in the same way, so I chose to wait until I was sure I, the wrapping code, wanted to write.
 
-        Buffer output = Buffer.buffer(buffer.toByteArray());
+        Buffer output = Buffer.buffer(this.bufferBytes());
         context.response().end(output);
     }
 
     public byte[] bufferBytes() {
-        return buffer.toByteArray();
+        return outBuffer.bufferBytes();
     }
-
-    private class WrappedOutputStream extends ServletOutputStream {
-        @Override
-        public boolean isReady() {
-            return true;
-        }
-
-        @Override
-        public void setWriteListener(WriteListener writeListener) {
-
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            buffer.write(b);
-        }
-
-        @Override
-        public void flush() throws IOException {
-            buffer.flush();
-        }
-
-        @Override
-        public void close() throws IOException {
-            flush();
-            buffer.close();
-        }
-    }
-
-    private final WrappedOutputStream outBuffer = new WrappedOutputStream();
-    private final PrintWriter outWriter = new PrintWriter(outBuffer);
-
 
     public VertxHttpServletResponse(RoutingContext context) {
        this.context = context;
     }
 
     @Override
-    public void addCookie(Cookie cookie) {
-       throw new NotImplementedException();
+    public void addCookie(javax.servlet.http.Cookie cookie) {
+    	io.vertx.core.http.Cookie vertxCookie = io.vertx.core.http.Cookie.cookie(cookie.getName(), cookie.getValue());
+    	vertxCookie.setDomain(cookie.getDomain());
+        vertxCookie.setHttpOnly(cookie.isHttpOnly());
+        vertxCookie.setMaxAge(cookie.getMaxAge());
+        vertxCookie.setPath(cookie.getPath());
+        vertxCookie.setSecure(cookie.getSecure());
+    	context.addCookie(vertxCookie);
     }
 
     @Override
@@ -226,17 +199,17 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     @Override
     public int getBufferSize() {
         // TODO: does this even matter?
-        return buffer.size();
+        return outBuffer.getBufferSize();
     }
 
     @Override
     public void flushBuffer() throws IOException {
-        buffer.flush();
+        outBuffer.flush();
     }
 
     @Override
     public void resetBuffer() {
-        buffer.reset();
+        outBuffer.resetBuffer();
     }
 
     @Override

@@ -254,12 +254,13 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     public void setLocale(java.util.Locale locale) {
     	LanguageHeader lh = null;
     	event.acceptableLanguages().add(0, lh );
-        event.acceptableLocales().add(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
+        // event.acceptableLocales().add(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
+    	// event.acceptableLanguages().add(io.vertx.ext.web.LanguageHeader)(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
     }
 
     @Override
     public Locale getLocale() {
-        io.vertx.ext.web.Locale locale = event.preferredLocale();
-        return new Locale(locale.language(), locale.country(), locale.variant());
+        io.vertx.ext.web.LanguageHeader locale = event.preferredLanguage();
+        return new java.util.Locale(locale.tag(), locale.subtag(1), locale.subtag(2));
     }
 }

@@ -5,7 +5,6 @@ import io.vertx.core.MultiMap;
 // import io.netty.handler.codec.http.HttpHeaders;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.Session;
 import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.*;
@@ -20,6 +19,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import io.vertx.core.http.HttpServerRequest;
+import com.collokia.webapp.routes.VertxHttpSession;
+import com.collokia.webapp.routes.VertxServletInputStream;
 
 /**
  * HttpServletRequest wrapper over a vert.x {@link io.vertx.core.http.HttpServerRequest}
@@ -43,7 +44,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         // TODO: AUTH -- if supporting vertx-auth we would need to do something here, and other methods below (marked with TODO: AUTH)
         return null;
     }
-    
+
     @Override
     public javax.servlet.http.Cookie[] getCookies() {
 
@@ -112,10 +113,10 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 			public final String nextElement() {
 				return it.next();
 			}
-		};	
+		};
 	}
-    
-    
+
+
     @Override
     public Enumeration<String> getHeaderNames() {
         return Collections.enumeration(context.request().headers().names());
@@ -213,116 +214,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public HttpSession getSession(boolean create) {
-        return new WrapSession(context.session());
+        return new VertxHttpSession(context.session());
     }
-
-    private class WrapSession implements HttpSession {
-        private final Session session;
-
-        WrapSession(Session session) {
-            this.session = session;
-        }
-
-        @Override
-        public long getCreationTime() {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public String getId() {
-            return session.id();
-        }
-
-        @Override
-        public long getLastAccessedTime() {
-            return session.lastAccessed();
-        }
-
-        @Override
-        public ServletContext getServletContext() {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public void setMaxInactiveInterval(int interval) {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public int getMaxInactiveInterval() {
-            throw new NotImplementedException();
-        }
-
-        // Deprecated with no replacement per spec
-        @SuppressWarnings("deprecation")
-		@Override
-        public HttpSessionContext getSessionContext() {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public Object getAttribute(String name) {
-            return session.get(name);
-        }
-
-        @Override
-        public Object getValue(String name) {
-            return session.get(name);
-        }
-
-        @Override
-        public Enumeration<String> getAttributeNames() {
-            return Collections.enumeration(session.data().keySet());
-        }
-
-        @Override
-        public String[] getValueNames() {
-            return (String[]) session.data().keySet().toArray();
-        }
-
-        @Override
-        public void setAttribute(String name, Object value) {
-            if (value == null) {
-                session.remove(name);
-            } else {
-                session.put(name, value);
-            }
-        }
-
-        @Override
-        public void putValue(String name, Object value) {
-            if (value == null) {
-                session.remove(name);
-            } else {
-                session.put(name, value);
-            }
-        }
-
-        @Override
-        public void removeAttribute(String name) {
-            session.remove(name);
-        }
-
-        @Override
-        public void removeValue(String name) {
-            session.remove(name);
-        }
-
-        @Override
-        public void invalidate() {
-            session.destroy();
-        }
-
-        @Override
-        public boolean isNew() {
-            return false;
-        }
-    }
-
 
     @Override
     public HttpSession getSession() {
-        return new WrapSession(context.session());
+        return new VertxHttpSession(context.session());
     }
 
 
@@ -430,36 +327,9 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return new WrappedInputStream(new ByteArrayInputStream(context.getBodyAsString().getBytes()));
+        return new VertxServletInputStream(new ByteArrayInputStream(context.getBodyAsString().getBytes()));
     }
 
-    private class WrappedInputStream extends ServletInputStream {
-        private final ByteArrayInputStream stream;
-
-        WrappedInputStream(ByteArrayInputStream stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public boolean isFinished() {
-            return false;
-        }
-
-        @Override
-        public boolean isReady() {
-            return stream.available() > 0;
-        }
-
-        @Override
-        public void setReadListener(ReadListener readListener) {
-
-        }
-
-        @Override
-        public int read() throws IOException {
-            return stream.read();
-        }
-    }
 
 
     @Override
