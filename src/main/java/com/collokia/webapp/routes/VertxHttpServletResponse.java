@@ -7,7 +7,6 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +17,7 @@ import java.util.*;
 public class VertxHttpServletResponse implements HttpServletResponse {
     final RoutingContext context;
     private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-    private final VertxServletOutputStream outBuffer = new VertxServletOutputStream();
+    private VertxServletOutputStream outBuffer = null;
     private final PrintWriter outWriter = new PrintWriter(outBuffer);
 
     public void writeToVertx() {
@@ -35,6 +34,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
     public VertxHttpServletResponse(RoutingContext context) {
        this.context = context;
+       this.outBuffer = new VertxServletOutputStream(context.response());
     }
 
     @Override
@@ -215,7 +215,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     @Override
     public boolean isCommitted() {
         // since we defer writing, it is never committed
-        return false;
+        return context.response().ended();
     }
 
     @Override

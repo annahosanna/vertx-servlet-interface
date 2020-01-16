@@ -4,19 +4,16 @@ import com.jiabangou.ninja.vertx.standalone.utils.DateGenerator;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
-// import io.vertx.ext.web.impl.LocaleImpl;
-import io.vertx.ext.web.LanguageHeader;
-// import io.vertx.ext.web.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  * VertxHttpServletResponse
@@ -250,17 +247,51 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     public void reset() {
     }
 
+    // How do I create a new Locale without using a deprecated method
     @Override
     public void setLocale(java.util.Locale locale) {
-    	LanguageHeader lh = null;
-    	event.acceptableLanguages().add(0, lh );
-        // event.acceptableLocales().add(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
-    	// event.acceptableLanguages().add(io.vertx.ext.web.LanguageHeader)(0, io.vertx.ext.web.Locale.create(locale.getLanguage(), locale.getCountry(), locale.getVariant() ));
+    	// This should create a new LanguageHeader
+    	// prepended to the list
+    	if (locale == null) {
+    		locale = java.util.Locale.getDefault();
+    	}
+    	// io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
+    	String newLocale = new String();
+    	if (!(StringUtils.isBlank(locale.getLanguage()))) {
+    		newLocale += locale.getLanguage();
+    		// if not blank append next by dash
+        	if (!(StringUtils.isBlank(locale.getCountry()))) {
+        		newLocale += "-" + locale.getCountry();
+        		// if not blank append next by dash
+            	if (!(StringUtils.isBlank(locale.getVariant()))) {
+            		newLocale += "-" + locale.getVariant();
+            	}
+        	}
+    		
+    	}
+    	if (event.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
+    		event.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
+    	}
+    	if (!(StringUtils.isBlank(newLocale))) {
+    		event.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
+    	}
+
     }
 
     @Override
-    public Locale getLocale() {
+    public java.util.Locale getLocale() {
         io.vertx.ext.web.LanguageHeader locale = event.preferredLanguage();
-        return new java.util.Locale(locale.tag(), locale.subtag(1), locale.subtag(2));
+        if (locale == null) {
+        	return java.util.Locale.getDefault();
+        }
+        // Return "" if subtags are null
+        // Return java.util.Locale.getDefault() if empty or null
+        String language = locale.tag();
+        String country = locale.subtag(1);
+        String variant = locale.subtag(2);
+        language = language == null ? "" : language;
+        country = country == null ? "" : country;
+        variant = variant == null ? "" : variant;
+        return new java.util.Locale(language, country, variant);
     }
 }
