@@ -304,6 +304,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         throw new NotImplementedException();
     }
 
+	// content length is optional
     @Override
     public int getContentLength() {
         return getIntHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
@@ -327,7 +328,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return new VertxServletInputStream(new ByteArrayInputStream(context.getBodyAsString().getBytes()));
+        return new VertxServletInputStream(new ByteArrayInputStream(context.getBody.getBytes()));
     }
 
 
@@ -372,7 +373,17 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         return EMPTY_STRING_ARRAY;
     }
 
-    // TODO: This looks like it does nothing with the values  variable
+	 @Override
+    public Map<String, String[]> getParameterMap() {
+        MultiMap map = httpServerRequest.params();
+        Map<String, String[]> parameterMap = new HashMap<>();
+        for (String name : httpServerRequest.params().names()) {
+            List<String> values = map.getAll(name);
+            parameterMap.put(name, values.toArray(new String[values.size()]));
+        }
+        return parameterMap;
+    }
+	
     @Override
     public Map<String, String[]> getParameterMap() {
         Map<String, List<String>> map = new HashMap<>();
@@ -381,18 +392,23 @@ public class VertxHttpServletRequest implements HttpServletRequest {
             List<String> values = map.get(e.getKey());
             if (values == null) {
                 values = new ArrayList<>();
-                map.put(e.getKey(), values);
-            }
-            values.add(e.getValue());
+	    }
+		    if (e.getValue != null) {
+            		values.add(e.getValue());
+			 map.put(e.getKey(), values);
+		    }
         }
 
         for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
             List<String> values = map.get(e.getKey());
             if (values == null) {
                 values = new ArrayList<>();
-                map.put(e.getKey(), values);
-            }
-            values.add(e.getValue());
+            } 
+		    if (e.getValue != null) {
+            		values.add(e.getValue());
+			 map.put(e.getKey(), values);
+		    }
+        
         }
 
         Map<String, String[]> arrayMap = new HashMap<>();
@@ -460,22 +476,18 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         context.data().remove(name);
     }
 
-
-    @Override
+	@Override
     public Locale getLocale() {
-        String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.ACCEPT_LANGUAGE.toString());
-        if (header == null) {
-            return Locale.US;
-        }
-        return new Locale(header);
+        io.vertx.ext.web.Locale locale = event.preferredLocale();
+        return new Locale(locale.language(), locale.country(), locale.variant());
     }
-
 
     @Override
     public Enumeration<Locale> getLocales() {
-        List<Locale> list = new ArrayList<>();
-        list.add(getLocale());
-        return Collections.enumeration(list);
+        return Collections.enumeration(event.acceptableLocales().stream()
+                .map(locale ->
+                        new Locale(locale.language(), locale.country(), locale.variant()))
+                .collect(toList()));
     }
 
     @Override
