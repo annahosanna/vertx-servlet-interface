@@ -18,15 +18,8 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     final RoutingContext context;
     private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
     private VertxServletOutputStream outBuffer = null;
-    private final PrintWriter outWriter = new PrintWriter(outBuffer);
+    private PrintWriter outWriter = null;
 
-    public void writeToVertx() {
-        // The wrapper should call this when it is ready to send the response buffered here.  This could be changed to have it called directly,
-        // but not all frameworks use the output stream in the same way, so I chose to wait until I was sure I, the wrapping code, wanted to write.
-
-        Buffer output = Buffer.buffer(this.bufferBytes());
-        context.response().end(output);
-    }
 
     public byte[] bufferBytes() {
         return outBuffer.bufferBytes();
@@ -35,6 +28,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     public VertxHttpServletResponse(RoutingContext context) {
        this.context = context;
        this.outBuffer = new VertxServletOutputStream(context.response());
+        this.outWriter = new PrintWriter(this.outBuffer);
     }
 
     @Override
@@ -55,7 +49,14 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
     @Override
     public String encodeURL(String url) {
-        return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+        // Check this implementation to ensure the result format
+        // Can use content-type to get char set
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return s;
+        }
     }
 
     @Override
@@ -64,6 +65,16 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
     }
 
+    // https://commons.apache.org/proper/commons-validator/apidocs/index.html URLValidator
+    // https://commons.apache.org/proper/commons-text/javadocs/api-release/index.html TextStringBuilder, StringEscapeUtils 
+    // https://commons.apache.org/proper/commons-codec/apidocs/index.html (URLCodec)
+    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/entity/ContentType.html
+    // https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
+    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpStatus.html
+    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpHeaders.html
+    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/message/BasicListHeaderIterator.html
+    // https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html (DateUtils, URIBuilder, URIUtils, URLEcondedUtils)
+    //  IPAddressUtils
     @Override
     public String encodeUrl(String url) {
         return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
