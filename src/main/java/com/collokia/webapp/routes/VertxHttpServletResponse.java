@@ -171,6 +171,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         return outWriter;
     }
 
+    // THis is part of content-type
     @Override
     public void setCharacterEncoding(String charset) {
         throw new NotImplementedException();
@@ -181,6 +182,8 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         throw new NotImplementedException();
     }
 
+    // Could also use https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
+    // This also has the benifit of being able choose the best one from accept
     @Override
     public void setContentLengthLong(long len) {
         throw new NotImplementedException();
@@ -225,13 +228,52 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         resetBuffer();
     }
 
+    // Could also use https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
+    // This also has the benifit of being able choose the best one from accept
     @Override
-    public void setLocale(Locale loc) {
-        throw new NotImplementedException();
+    public void setLocale(java.util.Locale locale) {
+    	// This should create a new LanguageHeader
+    	// prepended to the list
+    	if (locale == null) {
+    		locale = java.util.Locale.getDefault();
+    	}
+    	// io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
+    	String newLocale = new String();
+    	if (!(StringUtils.isBlank(locale.getLanguage()))) {
+    		newLocale += locale.getLanguage();
+    		// if not blank append next by dash
+        	if (!(StringUtils.isBlank(locale.getCountry()))) {
+        		newLocale += "-" + locale.getCountry();
+        		// if not blank append next by dash
+            	if (!(StringUtils.isBlank(locale.getVariant()))) {
+            		newLocale += "-" + locale.getVariant();
+            	}
+        	}
+    		
+    	}
+    	if (event.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
+    		event.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
+    	}
+    	if (!(StringUtils.isBlank(newLocale))) {
+    		event.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
+    	}
+
     }
 
     @Override
-    public Locale getLocale() {
-        throw new NotImplementedException();
+    public java.util.Locale getLocale() {
+        io.vertx.ext.web.LanguageHeader locale = event.preferredLanguage();
+        if (locale == null) {
+        	return java.util.Locale.getDefault();
+        }
+        // Return "" if subtags are null
+        // Return java.util.Locale.getDefault() if empty or null
+        String language = locale.tag();
+        String country = locale.subtag(1);
+        String variant = locale.subtag(2);
+        language = language == null ? "" : language;
+        country = country == null ? "" : country;
+        variant = variant == null ? "" : variant;
+        return new java.util.Locale(language, country, variant);
     }
 }
