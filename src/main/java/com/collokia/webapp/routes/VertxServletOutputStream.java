@@ -10,67 +10,67 @@ import io.vertx.core.http.HttpServerResponse;
 import java.io.IOException;
 
 public class VertxServletOutputStream extends ServletOutputStream {
-	
-    private HttpServerResponse resp;
-    private Buffer buffer;
-	
-    public VertxServletOutputStream(HttpServerResponse resp) {
-        this.resp = resp;
-        this.buffer = Buffer.buffer();
-    }
 
-    @Override
-    public boolean isReady() {
-        return true;
-    }
+	private HttpServerResponse resp;
+	private Buffer buffer;
 
-    @Override
-    public void setWriteListener(WriteListener writeListener) {
-    }
+	public VertxServletOutputStream(HttpServerResponse resp) {
+		this.resp = resp;
+		this.buffer = Buffer.buffer();
+	}
 
-    @Override
-    public void write(int b) throws IOException {
-        buffer.appendByte((byte)b);
-    }
+	@Override
+	public boolean isReady() {
+		return true;
+	}
 
-    @Override
-    public void write(byte[] b) throws IOException {
-        buffer.appendBytes(b);
-    }
-    
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        buffer.appendBytes(b, off, len);
-    }
-    
-    @Override
-    public void flush() throws IOException {
-        if (buffer.length() > 0) {
-            resp.write(buffer);
-            buffer = Buffer.buffer();
-        }
-    }
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
+	}
 
-    @Override
-    public void close() throws IOException {
-        if (!resp.ended()) {
-            resp.end(buffer);
-        }
-    }
+	@Override
+	public void write(int b) throws IOException {
+		buffer.appendByte((byte)b);
+	}
 
-    public byte[] bufferBytes() {
-        return buffer.getBytes();
-    }
+	@Override
+	public void write(byte[] b) throws IOException {
+		buffer.appendBytes(b);
+	}
 
-    public int getBufferSize() {
-        // TODO: does this even matter?
-        return buffer.length();
-    }
+	@Override
+	public void write(byte[] b, int off, int len) throws IOException {
+		buffer.appendBytes(b, off, len);
+	}
 
-    public void resetBuffer() {
-        buffer = Buffer.buffer();
-    }
-    
+	@Override
+	public void flush() throws IOException {
+		if (buffer.length() > 0) {
+			resp.write(buffer);
+			buffer = Buffer.buffer();
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (!resp.ended()) {
+			resp.end(buffer);
+		}
+	}
+
+	public byte[] bufferBytes() {
+		return buffer.getBytes();
+	}
+
+	public int getBufferSize() {
+		// TODO: does this even matter?
+		return buffer.length();
+	}
+
+	public void resetBuffer() {
+		buffer = Buffer.buffer();
+	}
+
 
 }
 
