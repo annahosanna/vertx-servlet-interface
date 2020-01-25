@@ -5,11 +5,14 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -54,8 +57,13 @@ public class VertxHttpServletResponse implements HttpServletResponse {
   }
 
   @Override
-  public String encodeURL(String url) {
-    return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+  public String encodeURL(String s) {
+      try {
+          return URLEncoder.encode(s, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
+          return s;
+      }
   }
 
   @Override
@@ -171,11 +179,13 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     return outWriter;
   }
 
+  // Content-Type header
   @Override
   public void setCharacterEncoding(String charset) {
     throw new NotImplementedException();
   }
 
+  // Content-Length header
   @Override
   public void setContentLength(int len) {
     throw new NotImplementedException();
@@ -226,12 +236,49 @@ public class VertxHttpServletResponse implements HttpServletResponse {
   }
 
   @Override
-  public void setLocale(Locale loc) {
-    throw new NotImplementedException();
+  public void setLocale(java.util.Locale locale) {
+  	// This should create a new LanguageHeader
+  	// prepended to the list
+  	if (locale == null) {
+  		locale = java.util.Locale.getDefault();
+  	}
+  	// io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
+  	String newLocale = new String();
+  	if (!(StringUtils.isBlank(locale.getLanguage()))) {
+  		newLocale += locale.getLanguage();
+  		// if not blank append next by dash
+      	if (!(StringUtils.isBlank(locale.getCountry()))) {
+      		newLocale += "-" + locale.getCountry();
+      		// if not blank append next by dash
+          	if (!(StringUtils.isBlank(locale.getVariant()))) {
+          		newLocale += "-" + locale.getVariant();
+          	}
+      	}
+  		
+  	}
+  	if (context.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
+  		context.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
+  	}
+  	if (!(StringUtils.isBlank(newLocale))) {
+  		context.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
+  	}
+
   }
 
   @Override
-  public Locale getLocale() {
-    throw new NotImplementedException();
+  public java.util.Locale getLocale() {
+      io.vertx.ext.web.LanguageHeader locale = context.preferredLanguage();
+      if (locale == null) {
+      	return java.util.Locale.getDefault();
+      }
+      // Return "" if subtags are null
+      // Return java.util.Locale.getDefault() if empty or null
+      String language = locale.tag();
+      String country = locale.subtag(1);
+      String variant = locale.subtag(2);
+      language = language == null ? "" : language;
+      country = country == null ? "" : country;
+      variant = variant == null ? "" : variant;
+      return new java.util.Locale(language, country, variant);
   }
 }

@@ -162,14 +162,14 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
   @Override
   public String getRemoteUser() {
-    // TODO: AUTH -- we don't know what type of User we have from Vert.x so can't know the name
+    // TODO: AUTH -- some kind of Session implementation
     throw new NotImplementedException();
   }
 
   @Override
   public boolean isUserInRole(String role) {
-    // TODO: AUTH -- we could use context.user().isAuthorized(role, asyncCallback) to get the user and ask the role,
-    // but sometimes people prefix roles or do other things so we can't be sure how this would
+    // TODO: AUTH -- some kind of Session implementation. context.user().isAuthorized(role, asyncCallback) may return
+	// implementation specific results
     return false;
   }
 
@@ -177,7 +177,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
   @Override
   public Principal getUserPrincipal() {
     // TODO: AUTH -- would require conversion from context.user().principle() and convert it
-    // but that type is a json value whose data is auth provider dependant
+    // but that type is a json value whose data is auth provider dependent
     return null;
   }
 
@@ -295,6 +295,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
   @Override
   public String getCharacterEncoding() {
+	// TODO: encoding of input stream
     throw new NotImplementedException();
   }
 
@@ -306,6 +307,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
   @Override
   public int getContentLength() {
+	// TODO: This is the length made available by the input stream with a fall back to content-length header which is only required for HTTP 1.0
     return getIntHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
   }
 
@@ -347,6 +349,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
   @Override
   public Enumeration<String> getParameterNames() {
+	// Or empty enumeration if none (post params also included)
     List<String> names = new ArrayList<>(context.request().params().names());
     if (!context.request().formAttributes().isEmpty()) {
       names.addAll(context.request().formAttributes().names());
@@ -451,6 +454,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
   @Override
   public void setAttribute(String name, Object o) {
+	// Attributes are not persisted between requests so this is not really useful
     context.put(name, o);
   }
 
@@ -525,6 +529,8 @@ public class VertxHttpServletRequest implements HttpServletRequest {
   @Override
   public ServletContext getServletContext() {
     // TODO: doing this means we never end bleeding and implement another billion parts of servlet spec
+	// Really need javax.servlet.request.X509Certificate. As in:
+	// java.security.cert.X509Certificate[] certs = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
     throw new NotImplementedException();
   }
 
