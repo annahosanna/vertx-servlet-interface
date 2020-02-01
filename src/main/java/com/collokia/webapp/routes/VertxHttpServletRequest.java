@@ -327,10 +327,10 @@ public class VertxHttpServletRequest implements HttpServletRequest {
   }
 
 
-  @Override
-  public ServletInputStream getInputStream() throws IOException {
-    return new VertxServletInputStream(new ByteArrayInputStream(context.getBodyAsString().getBytes()));
-  }
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        return new VertxServletInputStream(new ByteArrayInputStream(context.getBody.getBytes()));
+    }
 
 
 
@@ -372,14 +372,63 @@ public class VertxHttpServletRequest implements HttpServletRequest {
       return values.toArray(new String[values.size()]);
     }
 
+    // TODO: This looks like it does nothing with the values  variable
+	 @Override
+    public Map<String, String[]> getParameterMap() {
+        MultiMap map = httpServerRequest.params();
+        Map<String, String[]> parameterMap = new HashMap<>();
+        for (String name : httpServerRequest.params().names()) {
+            List<String> values = map.getAll(name);
+            parameterMap.put(name, values.toArray(new String[values.size()]));
+        }
+        return parameterMap;
     return EMPTY_STRING_ARRAY;
   }
+    }
+	
 
+        for (Map.Entry<String, String> e : context.request().params()) {
+            List<String> values = map.get(e.getKey());
+            if (values == null) {
+                values = new ArrayList<>();
+                map.put(e.getKey(), values);
+            }
+            values.add(e.getValue());
+        }
+        for (Map.Entry<String, String> e : context.request().params()) {
+            List<String> values = map.get(e.getKey());
+            if (values == null) {
+                values = new ArrayList<>();
+	    }
+		    if (e.getValue != null) {
+            		values.add(e.getValue());
+			 map.put(e.getKey(), values);
+		    }
+        }
   // TODO: This looks like it does nothing with the values  variable
   @Override
   public Map<String, String[]> getParameterMap() {
     Map<String, List<String>> map = new HashMap<>();
 
+        for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
+            List<String> values = map.get(e.getKey());
+            if (values == null) {
+                values = new ArrayList<>();
+                map.put(e.getKey(), values);
+            }
+            values.add(e.getValue());
+        }
+        for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
+            List<String> values = map.get(e.getKey());
+            if (values == null) {
+                values = new ArrayList<>();
+            } 
+		    if (e.getValue != null) {
+            		values.add(e.getValue());
+			 map.put(e.getKey(), values);
+		    }
+        
+        }
     for (Map.Entry<String, String> e : context.request().params()) {
       List<String> values = map.get(e.getKey());
       if (values == null) {
@@ -465,6 +514,18 @@ public class VertxHttpServletRequest implements HttpServletRequest {
   }
 
 
+    @Override
+    public Locale getLocale() {
+        String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.ACCEPT_LANGUAGE.toString());
+        if (header == null) {
+            return Locale.US;
+        }
+        return new Locale(header);
+	@Override
+    public Locale getLocale() {
+        io.vertx.ext.web.Locale locale = event.preferredLocale();
+        return new Locale(locale.language(), locale.country(), locale.variant());
+
   @Override
   public Locale getLocale() {
     String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.ACCEPT_LANGUAGE.toString());
@@ -474,7 +535,19 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     return new Locale(header);
   }
 
-
+    @Override
+    public Enumeration<Locale> getLocales() {
+        List<Locale> list = new ArrayList<>();
+        list.add(getLocale());
+        return Collections.enumeration(list);
+    }
+    @Override
+    public Enumeration<Locale> getLocales() {
+        return Collections.enumeration(event.acceptableLocales().stream()
+                .map(locale ->
+                        new Locale(locale.language(), locale.country(), locale.variant()))
+                .collect(toList()));
+    }
   @Override
   public Enumeration<Locale> getLocales() {
     List<Locale> list = new ArrayList<>();

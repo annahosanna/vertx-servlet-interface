@@ -6,3 +6,9 @@
 * [From vertx-httpservlet](https://github.com/annahosanna/vertx-httpservlet)
 * [From dynatrace-vertx-aspect](https://github.com/annahosanna/dynatrace-vertx-aspect/tree/master/src/main/java/com/dynatrace/vertx/aspects)
 * [From firefly](https://github.com/annahosanna/firefly/blob/master/firefly/src/main/java/com/firefly/codec/http2/model/servlet/)
+
+#### Other
+Apache Sling-Engine
+Apache CXF
+[Servlet Spec](https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/)
+[Serverless Servlet](https://github.com/awslabs/aws-serverless-java-container/tree/master/aws-serverless-java-container-core/src/main/java/com/amazonaws/serverless/proxy/internal/servlet)
