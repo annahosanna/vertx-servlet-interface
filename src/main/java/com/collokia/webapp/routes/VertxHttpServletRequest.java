@@ -283,6 +283,9 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     throw new NotImplementedException();
   }
 
+//	X509Certificate certs[] = (X509Certificate[]) request
+//   .getAttribute("javax.servlet.request.X509Certificate");
+// which is the same as httpserverrequest.netsocket.SSLSession.getPeerCertificates	
   @Override
   public Object getAttribute(String name) {
     return context.data().get(name);
