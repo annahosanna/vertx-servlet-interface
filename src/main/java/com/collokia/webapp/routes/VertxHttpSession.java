@@ -1,5 +1,6 @@
 package com.collokia.webapp.routes;
 
+// Used for a single HttpSession with a client
 
 import io.vertx.ext.web.Session;
 import org.apache.commons.lang.NotImplementedException;
