@@ -1,5 +1,6 @@
 package com.collokia.webapp.routes;
 
+// Context attributes are used to communicate between handlers
 
 import io.vertx.core.MultiMap;
 // import io.netty.handler.codec.http.HttpHeaders;
