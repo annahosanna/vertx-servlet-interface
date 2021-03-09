@@ -1,6 +1,9 @@
 package com.collokia.webapp.routes;
 
-// Context attributes are used to communicate between handlers
+// Context attributes are used to communicate between handlers - but that should not go here
+// Attributes of each request are prepopulated with context attributes (but do not set context attributes)
+// HttpServletRequest is a single request within an HttpSession.
+// Always populate javax.servlet.request.X509Certificate if there are client certificates
 
 import io.vertx.core.MultiMap;
 // import io.netty.handler.codec.http.HttpHeaders;
@@ -286,7 +289,8 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
 //	X509Certificate certs[] = (X509Certificate[]) request
 //   .getAttribute("javax.servlet.request.X509Certificate");
-// which is the same as httpserverrequest.netsocket.SSLSession.getPeerCertificates	
+// which is the same as httpserverrequest.netsocket.SSLSession.getPeerCertificates
+// There is one ServeletContext Per web application.
   @Override
   public Object getAttribute(String name) {
     return context.data().get(name);
