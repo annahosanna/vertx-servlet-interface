@@ -522,17 +522,13 @@ public class VertxHttpServletRequest implements HttpServletRequest {
   }
 
 
-    @Override
-    public Locale getLocale() {
-        String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.ACCEPT_LANGUAGE.toString());
-        if (header == null) {
-            return Locale.US;
-        }
-        return new Locale(header);
+	// Get the highest preference/first locale
 	@Override
     public Locale getLocale() {
-        io.vertx.ext.web.Locale locale = event.preferredLocale();
+	List<LanguageHeader> languages = this.context.acceptableLanguages()
+        // io.vertx.ext.web.Locale locale = this.context.event.preferredLocale();
         return new Locale(locale.language(), locale.country(), locale.variant());
+    }
 
   @Override
   public Locale getLocale() {
@@ -545,23 +541,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Enumeration<Locale> getLocales() {
-        List<Locale> list = new ArrayList<>();
-        list.add(getLocale());
-        return Collections.enumeration(list);
-    }
-    @Override
-    public Enumeration<Locale> getLocales() {
-        return Collections.enumeration(event.acceptableLocales().stream()
+	    // Use acceptableLanguages not acceptableLocales
+        return Collections.enumeration(this.context.acceptableLocales().stream()
                 .map(locale ->
                         new Locale(locale.language(), locale.country(), locale.variant()))
                 .collect(toList()));
     }
-  @Override
-  public Enumeration<Locale> getLocales() {
-    List<Locale> list = new ArrayList<>();
-    list.add(getLocale());
-    return Collections.enumeration(list);
-  }
 
   @Override
   public boolean isSecure() {
