@@ -18,14 +18,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class VertxHttpServletResponse implements HttpServletResponse {
-    final RoutingContext context;
-    private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-    private VertxServletOutputStream outBuffer = null;
-    private final PrintWriter outWriter = new PrintWriter(outBuffer);
-    final RoutingContext context;
-    private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-    private VertxServletOutputStream outBuffer = null;
-    private PrintWriter outWriter = null;
+  final RoutingContext context;
+  private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+  private VertxServletOutputStream outBuffer = null;
+  private final PrintWriter outWriter = new PrintWriter(outBuffer);
+  final RoutingContext context;
+  private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+  private VertxServletOutputStream outBuffer = null;
+  private PrintWriter outWriter = null;
   final RoutingContext context;
   private final DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
   private VertxServletOutputStream outBuffer = null;
@@ -34,16 +34,10 @@ public class VertxHttpServletResponse implements HttpServletResponse {
   public void writeToVertx() {
     // The wrapper should call this when it is ready to send the response buffered here.  This could be changed to have it called directly,
     // but not all frameworks use the output stream in the same way, so I chose to wait until I was sure I, the wrapping code, wanted to write.
-    public void writeToVertx() {
-        // The wrapper should call this when it is ready to send the response buffered here.  This could be changed to have it called directly,
-        // but not all frameworks use the output stream in the same way, so I chose to wait until I was sure I, the wrapping code, wanted to write.
     Buffer output = Buffer.buffer(this.bufferBytes());
     context.response().end(output);
   }
 
-        Buffer output = Buffer.buffer(this.bufferBytes());
-        context.response().end(output);
-    }
   public byte[] bufferBytes() {
     return outBuffer.bufferBytes();
   }
@@ -53,15 +47,16 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     this.outBuffer = new VertxServletOutputStream(context.response());
   }
 
-    public VertxHttpServletResponse(RoutingContext context) {
-       this.context = context;
-       this.outBuffer = new VertxServletOutputStream(context.response());
-    }
-    public VertxHttpServletResponse(RoutingContext context) {
-       this.context = context;
-       this.outBuffer = new VertxServletOutputStream(context.response());
-        this.outWriter = new PrintWriter(this.outBuffer);
-    }
+  public VertxHttpServletResponse(RoutingContext context) {
+      this.context = context;
+      this.outBuffer = new VertxServletOutputStream(context.response());
+  }
+  public VertxHttpServletResponse(RoutingContext context) {
+      this.context = context;
+      this.outBuffer = new VertxServletOutputStream(context.response());
+      this.outWriter = new PrintWriter(this.outBuffer);
+  }
+
   @Override
   public void addCookie(javax.servlet.http.Cookie cookie) {
     io.vertx.core.http.Cookie vertxCookie = io.vertx.core.http.Cookie.cookie(cookie.getName(), cookie.getValue());
@@ -80,29 +75,31 @@ public class VertxHttpServletResponse implements HttpServletResponse {
 
   @Override
   public String encodeURL(String s) {
-      try {
-          return URLEncoder.encode(s, "UTF-8");
-      } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-          return s;
-      }
+    try {
+      return URLEncoder.encode(s, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+      return s;
+    }
   }
 
-    @Override
-    public String encodeURL(String url) {
-        return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+  @Override
+  public String encodeURL(String url) {
+    return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+  }
+
+  @Override
+  public String encodeURL(String url) {
+    // Check this implementation to ensure the result format
+    // Can use content-type to get char set
+    try {
+        return URLEncoder.encode(s, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+        return s;
     }
-    @Override
-    public String encodeURL(String url) {
-        // Check this implementation to ensure the result format
-        // Can use content-type to get char set
-        try {
-            return URLEncoder.encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return s;
-        }
-    }
+  }
+
   @Override
   public String encodeRedirectURL(String url) {
     return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
@@ -114,24 +111,25 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
   }
 
-    @Override
-    public String encodeUrl(String url) {
-        return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
-    }
-    // https://commons.apache.org/proper/commons-validator/apidocs/index.html URLValidator
-    // https://commons.apache.org/proper/commons-text/javadocs/api-release/index.html TextStringBuilder, StringEscapeUtils 
-    // https://commons.apache.org/proper/commons-codec/apidocs/index.html (URLCodec)
-    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/entity/ContentType.html
-    // https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
-    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpStatus.html
-    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpHeaders.html
-    // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/message/BasicListHeaderIterator.html
-    // https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html (DateUtils, URIBuilder, URIUtils, URLEcondedUtils)
-    //  IPAddressUtils
-    @Override
-    public String encodeUrl(String url) {
-        return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
-    }
+  @Override
+  public String encodeUrl(String url) {
+      return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+  }
+  // https://commons.apache.org/proper/commons-validator/apidocs/index.html URLValidator
+  // https://commons.apache.org/proper/commons-text/javadocs/api-release/index.html TextStringBuilder, StringEscapeUtils 
+  // https://commons.apache.org/proper/commons-codec/apidocs/index.html (URLCodec)
+  // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/entity/ContentType.html
+  // https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
+  // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpStatus.html
+  // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/HttpHeaders.html
+  // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/message/BasicListHeaderIterator.html
+  // https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html (DateUtils, URIBuilder, URIUtils, URLEcondedUtils)
+  //  IPAddressUtils
+  @Override
+  public String encodeUrl(String url) {
+      return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
+  }
+
   @Override
   public String encodeRedirectUrl(String url) {
     return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
@@ -240,36 +238,36 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     throw new NotImplementedException();
   }
 
-    @Override
-    public void setCharacterEncoding(String charset) {
-        throw new NotImplementedException();
-    }
-    // THis is part of content-type
-    @Override
-    public void setCharacterEncoding(String charset) {
-        throw new NotImplementedException();
-    }
+  @Override
+  public void setCharacterEncoding(String charset) {
+      throw new NotImplementedException();
+  }
+  // THis is part of content-type
+  @Override
+  public void setCharacterEncoding(String charset) {
+      throw new NotImplementedException();
+  }
+
   // Content-Length header
   @Override
   public void setContentLength(int len) {
-    throw new NotImplementedException();
+    java.lang.Integer intValue = java.lang.Integer(len); 
+    setContentLength(intValue.longValue());
+  }
+
+  @Override
+  public void setContentLength(long len) {
+    setContentLengthLong(len);
   }
 
   @Override
   public void setContentLengthLong(long len) {
-    throw new NotImplementedException();
+    java.lang.Long longValue = java.lang.Long(len) 
+    setHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString(), longValue.toString());
   }
 
-    @Override
-    public void setContentLengthLong(long len) {
-        throw new NotImplementedException();
-    }
-    // Could also use https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
-    // This also has the benifit of being able choose the best one from accept
-    @Override
-    public void setContentLengthLong(long len) {
-        throw new NotImplementedException();
-    }
+  // Could also use https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
+  // This also has the benifit of being able choose the best one from accept  
   @Override
   public void setContentType(String type) {
     setHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE.toString(), type);
@@ -309,75 +307,38 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     resetBuffer();
   }
 
+
   @Override
   public void setLocale(java.util.Locale locale) {
-  	// This should create a new LanguageHeader
-  	// prepended to the list
-  	if (locale == null) {
-  		locale = java.util.Locale.getDefault();
-  	}
-  	// io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
-  	String newLocale = new String();
-  	if (!(StringUtils.isBlank(locale.getLanguage()))) {
-  		newLocale += locale.getLanguage();
-  		// if not blank append next by dash
-      	if (!(StringUtils.isBlank(locale.getCountry()))) {
-      		newLocale += "-" + locale.getCountry();
-      		// if not blank append next by dash
-          	if (!(StringUtils.isBlank(locale.getVariant()))) {
-          		newLocale += "-" + locale.getVariant();
-          	}
-      	}
-  		
-  	}
-  	if (context.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
-  		context.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
-  	}
-  	if (!(StringUtils.isBlank(newLocale))) {
-  		context.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
-  	}
-
-    @Override
-    public void setLocale(Locale loc) {
-        throw new NotImplementedException();
+    // This should create a new LanguageHeader
+    // prepended to the list
+    if (locale == null) {
+      locale = java.util.Locale.getDefault();
     }
-    // Could also use https://developers.google.com/gdata/javadoc/com/google/gdata/util/ContentType.html
-    // This also has the benifit of being able choose the best one from accept
-    @Override
-    public void setLocale(java.util.Locale locale) {
-    	// This should create a new LanguageHeader
-    	// prepended to the list
-    	if (locale == null) {
-    		locale = java.util.Locale.getDefault();
-    	}
-    	// io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
-    	String newLocale = new String();
-    	if (!(StringUtils.isBlank(locale.getLanguage()))) {
-    		newLocale += locale.getLanguage();
-    		// if not blank append next by dash
-        	if (!(StringUtils.isBlank(locale.getCountry()))) {
-        		newLocale += "-" + locale.getCountry();
-        		// if not blank append next by dash
-            	if (!(StringUtils.isBlank(locale.getVariant()))) {
-            		newLocale += "-" + locale.getVariant();
-            	}
-        	}
-    		
-    	}
-    	if (event.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
-    		event.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
-    	}
-    	if (!(StringUtils.isBlank(newLocale))) {
-    		event.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
-    	}
-
+    // io.vertx.ext.web.impl.ParsableLanguageValue newLH = new io.vertx.ext.web.impl.ParsableLanguageValue(locale.getLanguage() + "-" + locale.getCountry() + "-" + locale.getVariant());
+    String newLocale = new String();
+    if (!(StringUtils.isBlank(locale.getLanguage()))) {
+      newLocale += locale.getLanguage();
+      // if not blank append next by dash
+        if (!(StringUtils.isBlank(locale.getCountry()))) {
+          newLocale += "-" + locale.getCountry();
+          // if not blank append next by dash
+            if (!(StringUtils.isBlank(locale.getVariant()))) {
+              newLocale += "-" + locale.getVariant();
+            }
+        }
+      
     }
+    if (event.response().headers().contains(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE)) {
+      event.response().headers().remove(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE);
+    }
+    if (!(StringUtils.isBlank(newLocale))) {
+      event.response().putHeader(io.vertx.core.http.HttpHeaders.ACCEPT_LANGUAGE, newLocale);
+    }
+
   }
+  
 
-    @Override
-    public Locale getLocale() {
-        throw new NotImplementedException();
-    }
     @Override
     public java.util.Locale getLocale() {
         io.vertx.ext.web.LanguageHeader locale = event.preferredLanguage();
@@ -394,20 +355,5 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         variant = variant == null ? "" : variant;
         return new java.util.Locale(language, country, variant);
     }
-  @Override
-  public java.util.Locale getLocale() {
-      io.vertx.ext.web.LanguageHeader locale = context.preferredLanguage();
-      if (locale == null) {
-      	return java.util.Locale.getDefault();
-      }
-      // Return "" if subtags are null
-      // Return java.util.Locale.getDefault() if empty or null
-      String language = locale.tag();
-      String country = locale.subtag(1);
-      String variant = locale.subtag(2);
-      language = language == null ? "" : language;
-      country = country == null ? "" : country;
-      variant = variant == null ? "" : variant;
-      return new java.util.Locale(language, country, variant);
-  }
+
 }

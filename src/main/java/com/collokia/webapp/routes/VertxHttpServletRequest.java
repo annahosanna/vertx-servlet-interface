@@ -395,74 +395,74 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     }
 	
 
-        for (Map.Entry<String, String> e : context.request().params()) {
-            List<String> values = map.get(e.getKey());
-            if (values == null) {
-                values = new ArrayList<>();
-                map.put(e.getKey(), values);
-            }
-            values.add(e.getValue());
-        }
-        for (Map.Entry<String, String> e : context.request().params()) {
-            List<String> values = map.get(e.getKey());
-            if (values == null) {
-                values = new ArrayList<>();
-	    }
-		    if (e.getValue != null) {
-            		values.add(e.getValue());
-			 map.put(e.getKey(), values);
-		    }
-        }
-  // TODO: This looks like it does nothing with the values  variable
-  @Override
-  public Map<String, String[]> getParameterMap() {
-    Map<String, List<String>> map = new HashMap<>();
+  //       for (Map.Entry<String, String> e : context.request().params()) {
+  //           List<String> values = map.get(e.getKey());
+  //           if (values == null) {
+  //               values = new ArrayList<>();
+  //               map.put(e.getKey(), values);
+  //           }
+  //           values.add(e.getValue());
+  //       }
+  //       for (Map.Entry<String, String> e : context.request().params()) {
+  //           List<String> values = map.get(e.getKey());
+  //           if (values == null) {
+  //               values = new ArrayList<>();
+	//     }
+	// 	    if (e.getValue != null) {
+  //           		values.add(e.getValue());
+	// 		 map.put(e.getKey(), values);
+	// 	    }
+  //       }
+  // // TODO: This looks like it does nothing with the values  variable
+  // @Override
+  // public Map<String, String[]> getParameterMap() {
+  //   Map<String, List<String>> map = new HashMap<>();
 
-        for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
-            List<String> values = map.get(e.getKey());
-            if (values == null) {
-                values = new ArrayList<>();
-                map.put(e.getKey(), values);
-            }
-            values.add(e.getValue());
-        }
-        for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
-            List<String> values = map.get(e.getKey());
-            if (values == null) {
-                values = new ArrayList<>();
-            } 
-		    if (e.getValue != null) {
-            		values.add(e.getValue());
-			 map.put(e.getKey(), values);
-		    }
+  //       for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
+  //           List<String> values = map.get(e.getKey());
+  //           if (values == null) {
+  //               values = new ArrayList<>();
+  //               map.put(e.getKey(), values);
+  //           }
+  //           values.add(e.getValue());
+  //       }
+  //       for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
+  //           List<String> values = map.get(e.getKey());
+  //           if (values == null) {
+  //               values = new ArrayList<>();
+  //           } 
+	// 	    if (e.getValue != null) {
+  //           		values.add(e.getValue());
+	// 		 map.put(e.getKey(), values);
+	// 	    }
         
-        }
-    for (Map.Entry<String, String> e : context.request().params()) {
-      List<String> values = map.get(e.getKey());
-      if (values == null) {
-        values = new ArrayList<>();
-        map.put(e.getKey(), values);
-      }
-      values.add(e.getValue());
-    }
+  //       }
+  //   for (Map.Entry<String, String> e : context.request().params()) {
+  //     List<String> values = map.get(e.getKey());
+  //     if (values == null) {
+  //       values = new ArrayList<>();
+  //       map.put(e.getKey(), values);
+  //     }
+  //     values.add(e.getValue());
+  //   }
 
-    for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
-      List<String> values = map.get(e.getKey());
-      if (values == null) {
-        values = new ArrayList<>();
-        map.put(e.getKey(), values);
-      }
-      values.add(e.getValue());
-    }
+  //   for (Map.Entry<String, String> e : context.request().formAttributes().entries()) {
+  //     List<String> values = map.get(e.getKey());
+  //     if (values == null) {
+  //       values = new ArrayList<>();
+  //       map.put(e.getKey(), values);
+  //     }
+  //     values.add(e.getValue());
+  //   }
 
-    Map<String, String[]> arrayMap = new HashMap<>();
+  //   Map<String, String[]> arrayMap = new HashMap<>();
 
-    for (Map.Entry<String, List<String>> e : map.entrySet()) {
-      arrayMap.put(e.getKey(), e.getValue().toArray(new String[e.getValue().size()]));
-    }
+  //   for (Map.Entry<String, List<String>> e : map.entrySet()) {
+  //     arrayMap.put(e.getKey(), e.getValue().toArray(new String[e.getValue().size()]));
+  //   }
 
-    return arrayMap;
-  }
+  //   return arrayMap;
+  // }
 
   @Override
   public String getProtocol() {
