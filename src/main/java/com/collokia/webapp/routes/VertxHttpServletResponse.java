@@ -125,15 +125,6 @@ public class VertxHttpServletResponse implements HttpServletResponse {
   // https://hc.apache.org/httpcomponents-core-4.4.x/httpcore/apidocs/org/apache/http/message/BasicListHeaderIterator.html
   // https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html (DateUtils, URIBuilder, URIUtils, URLEcondedUtils)
   //  IPAddressUtils
-  @Override
-  public String encodeUrl(String url) {
-      return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
-  }
-
-  @Override
-  public String encodeRedirectUrl(String url) {
-    return url; // encoding usually involves adding session information and such, but doesn't really apply to vertx
-  }
 
   @Override
   public void sendError(int sc, String msg) throws IOException {

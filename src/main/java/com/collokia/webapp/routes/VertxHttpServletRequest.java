@@ -313,11 +313,17 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     throw new NotImplementedException();
   }
 
+
+  // TODO: This is the length made available by the input stream with a fall back to content-length header which is only required for HTTP 1.0
   @Override
   public int getContentLength() {
-	// TODO: This is the length made available by the input stream with a fall back to content-length header which is only required for HTTP 1.0
-    return getIntHeader(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
+    String header = context.request().headers().get(io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH.toString());
+    if (header == null) {
+      return -1;
+    }
+    return Integer.parseInt(header);
   }
+
 
   @Override
   public long getContentLengthLong() {
